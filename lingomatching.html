@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LingoTotal · Matching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1267d6;--primary-dark:#084ca8;--primary-light:#e8f2ff;--accent:#25b7d3;
+  --success:#198754;--danger:#c83d4f;--ink:#172033;--muted:#5f6b7a;--surface:#fff;
+  --soft:#f5f8fc;--border:#d9e2ef;--shadow:0 10px 28px rgba(26,69,120,.12);
+  --radius:18px;--radius-sm:11px
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:'Quicksand',sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,#eaf3ff 0,#f6f9fd 260px,#f3f6fa 100%);
+  line-height:1.55
+}
+button,input{font:inherit}
+.banner{
+  position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:18px;
+  min-height:82px;padding:12px clamp(14px,3vw,34px);
+  background:linear-gradient(135deg,#084ca8,#1267d6 58%,#25b7d3);
+  color:white;box-shadow:0 3px 14px rgba(8,76,168,.25)
+}
+.brand-wrap{display:flex;align-items:center;gap:12px;min-width:210px}
+.brand-mark{
+  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:white;color:var(--primary);
+  font-weight:800;font-size:1.05rem;box-shadow:0 6px 14px rgba(0,0,0,.18)
+}
+.brand{font-size:1.35rem;font-weight:800;letter-spacing:.055em}
+.tagline{font-size:.78rem;opacity:.9}
+.header-tools{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.language-pair{
+  padding:8px 12px;border:1px solid rgba(255,255,255,.5);border-radius:9px;
+  background:rgba(255,255,255,.12);font-size:.78rem;font-weight:700
+}
+.home-link{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:9px;
+  background:white;color:var(--primary-dark);text-decoration:none;font-size:.78rem;font-weight:800
+}
+.page{width:min(760px,calc(100% - 22px));margin:20px auto 40px}
+.panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:clamp(16px,3vw,28px);margin-bottom:18px
+}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#fff,#edf5ff)}
+.hero:before{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  right:-75px;top:-80px;background:rgba(37,183,211,.14)
+}
+h1{margin:0 0 7px;font-size:clamp(1.55rem,4vw,2.15rem);line-height:1.16}
+.hero p{margin:0;color:var(--muted);max-width:650px}
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.number{
+  width:36px;height:36px;flex:0 0 36px;border-radius:50%;display:grid;place-items:center;
+  background:var(--primary);color:#fff;font-weight:800
+}
+.section-title{font-size:1.16rem;font-weight:800}
+label{display:block;margin-bottom:6px;font-weight:700}
+input[type=text]{
+  width:100%;min-height:48px;padding:11px 13px;border:2px solid var(--border);
+  border-radius:var(--radius-sm);background:#fff;color:var(--ink);transition:.2s
+}
+input[type=text]:focus{outline:0;border-color:var(--primary);box-shadow:0 0 0 4px rgba(18,103,214,.13)}
+#themeInput.attention{border-color:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(37,183,211,0)}0%,100%{box-shadow:0 0 0 0 rgba(37,183,211,.35)}}
+.level-grid,.example-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.example-grid{grid-template-columns:repeat(4,1fr)}
+.choice{
+  padding:11px 8px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--ink);
+  font-weight:700;cursor:pointer;transition:.2s
+}
+.choice:hover,.choice.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark)}
+.helper{margin-top:14px;color:var(--muted);font-size:.88rem}
+.primary-btn,.secondary-btn{
+  border:0;border-radius:11px;padding:13px 18px;font-weight:800;cursor:pointer;transition:.2s
+}
+.primary-btn{width:100%;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff}
+.primary-btn:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(18,103,214,.25)}
+.primary-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.secondary-btn{background:#fff;border:1px solid var(--border);color:var(--ink)}
+.status{display:none;text-align:center;margin:16px 0;color:var(--muted)}
+.spinner{
+  width:30px;height:30px;margin:0 auto 8px;border:3px solid #dbe7f7;border-top-color:var(--primary);
+  border-radius:50%;animation:spin 1s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.exercise-intro{padding:15px;border-radius:12px;background:var(--soft);border:1px solid var(--border);margin-top:15px}
+.matching{display:none;margin-top:17px}
+.instructions{text-align:center;color:var(--muted);font-style:italic;margin-bottom:13px}
+.matching-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.column-title{text-align:center;font-weight:800;margin-bottom:8px}
+.items{display:flex;flex-direction:column;gap:9px}
+.match-item{
+  width:100%;min-height:62px;text-align:left;padding:11px 13px;border:2px solid var(--border);
+  border-radius:11px;background:#fff;color:var(--ink);cursor:pointer;transition:.2s
+}
+.match-item:hover,.match-item.selected{border-color:var(--primary);background:var(--primary-light)}
+.match-item.matched-0{border-color:#1267d6;background:#e8f2ff}
+.match-item.matched-1{border-color:#198754;background:#e8f6ef}
+.match-item.matched-2{border-color:#9b59b6;background:#f3eafa}
+.feedback{display:none;margin-top:13px;padding:12px 14px;border-radius:10px;font-weight:700}
+.feedback.success{background:#e9f7ef;color:#136c45;border:1px solid #9bd2b5}
+.feedback.error{background:#fff0f2;color:#a72f40;border:1px solid #efb6bf}
+.correct-list{display:none;margin-top:16px;padding:14px;border-left:5px solid var(--success);background:#f0faf5;border-radius:10px}
+.correct-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;background:white;
+  border:1px solid #cde7da;border-radius:9px;padding:9px 11px;margin-top:8px
+}
+.sound-btn{border:0;background:var(--primary-light);border-radius:8px;padding:7px 9px;cursor:pointer}
+.gap-section{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.gap-card{padding:14px;background:var(--soft);border:1px solid var(--border);border-radius:11px;margin-top:12px}
+.gap-text{font-weight:600;margin-bottom:10px}
+.gap-input-row{display:flex;gap:8px;margin-top:8px}
+.gap-input-row input{flex:1}
+.hint-btn{border:1px solid var(--border);background:white;border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer}
+.score{display:none;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}
+.score-card{text-align:center;padding:13px;background:var(--soft);border:1px solid var(--border);border-radius:11px}
+.score-value{font-size:1.35rem;font-weight:800;color:var(--primary)}
+.score-label{font-size:.78rem;color:var(--muted)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.actions .primary-btn{width:auto;flex:1}
+.notice{
+  position:fixed;right:18px;top:98px;z-index:200;max-width:min(360px,calc(100% - 36px));
+  padding:12px 15px;border-radius:10px;color:white;font-weight:700;box-shadow:var(--shadow);
+  transform:translateX(130%);transition:.25s
+}
+.notice.show{transform:translateX(0)}
+.notice.info{background:#1267d6}.notice.success{background:#198754}.notice.error{background:#c83d4f}
+.target-rtl{direction:rtl;text-align:right}
+.target-rtl .match-item,.target-rtl .gap-text,.target-rtl input{text-align:right}
+.footer{text-align:center;color:var(--muted);font-size:.72rem;padding:0 10px 24px}
+@media(max-width:700px){
+  .banner{align-items:flex-start;flex-direction:column}
+  .brand-wrap{min-width:0}
+  .header-tools{width:100%;justify-content:space-between}
+  .language-pair{flex:1}
+  .level-grid{grid-template-columns:1fr}
+  .example-grid{grid-template-columns:1fr 1fr}
+  .matching-grid{grid-template-columns:1fr}
+  .page{margin-top:12px}
+  .score{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="banner">
+  <div class="brand-wrap">
+    <div class="brand-mark">LT</div>
+    <div>
+      <div class="brand">LINGOTOTAL</div>
+      <div class="tagline" data-i18n="tagline">Learn any language your way</div>
+    </div>
+  </div>
+  <div class="header-tools">
+    <div class="language-pair" id="languagePair">English → Catalan</div>
+    <a class="home-link" href="index.html"><span>⌂</span><span data-i18n="changeLanguages">Activities / change languages</span></a>
+  </div>
+</header>
+
+<main class="page">
+  <section class="panel hero">
+    <h1 data-i18n="title">Match and complete sentences</h1>
+    <p data-i18n="intro">Choose your level and topic.</p>
+  </section>
+
+  <section class="panel">
+    <div class="section-head"><div class="number">1</div><div class="section-title" data-i18n="choose">Choose the level and topic</div></div>
+    <label for="themeInput" data-i18n="ownTopic">Write your own topic</label>
+    <input id="themeInput" class="attention" type="text" data-i18n-placeholder="topicPlaceholder" placeholder="For example: travel, technology, nature, food...">
+    <div class="level-grid">
+      <button class="choice level" data-level="beginner" data-i18n="beginner">Beginner (A1–A2)</button>
+      <button class="choice level" data-level="intermediate" data-i18n="intermediate">Intermediate (B1–B2)</button>
+      <button class="choice level" data-level="advanced" data-i18n="advanced">Advanced (C1–C2)</button>
+    </div>
+    <div class="helper" data-i18n="inspiration">Need inspiration?</div>
+    <div class="example-grid">
+      <button class="choice example" data-theme-key="travel" data-i18n="travel">Travel</button>
+      <button class="choice example" data-theme-key="technology" data-i18n="technology">Technology</button>
+      <button class="choice example" data-theme-key="nature" data-i18n="nature">Nature</button>
+      <button class="choice example" data-theme-key="food" data-i18n="food">Food</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head"><div class="number">2</div><div class="section-title" data-i18n="generateTitle">Generate the exercise</div></div>
+    <button id="generateBtn" class="primary-btn" data-i18n="generate">Generate matching exercise</button>
+    <div id="loading" class="status"><div class="spinner"></div><span data-i18n="generating">Generating your exercise…</span></div>
+    <div id="exerciseIntro" class="exercise-intro" data-i18n="waiting">Your exercise will appear here.</div>
+
+    <div id="matching" class="matching">
+      <div class="instructions" data-i18n="instructions">Select a sentence beginning and then its correct ending.</div>
+      <div class="matching-grid">
+        <div><div class="column-title" data-i18n="beginnings">Sentence beginnings</div><div id="beginningsList" class="items"></div></div>
+        <div><div class="column-title" data-i18n="endings">Sentence endings</div><div id="endingsList" class="items"></div></div>
+      </div>
+      <div id="wrongFeedback" class="feedback error" data-i18n="wrong">That pair is not correct. Try again.</div>
+      <div id="correctFeedback" class="feedback success" data-i18n="allMatched">Excellent. You matched all three sentences.</div>
+
+      <div id="correctList" class="correct-list">
+        <strong data-i18n="correctSentences">Correct sentences to practise:</strong>
+        <div id="correctRows"></div>
+      </div>
+
+      <div id="gapSection" class="gap-section">
+        <h2 data-i18n="completeTitle">Now complete the missing words</h2>
+        <p data-i18n="completeInstructions">Type the two important missing words in each sentence.</p>
+        <div id="gapExercise"></div>
+        <div id="gapSuccess" class="feedback success" data-i18n="gapSuccess">Excellent. Every answer is correct.</div>
+        <div id="gapError" class="feedback error"></div>
+        <div class="actions">
+          <button id="checkBtn" class="primary-btn" data-i18n="check">Check answers</button>
+          <button id="retryBtn" class="secondary-btn" data-i18n="retry">Try again</button>
+          <button id="newBtn" class="secondary-btn" data-i18n="newExercise">New exercise</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="score" class="score">
+      <div class="score-card"><div id="matchScore" class="score-value">0/3</div><div class="score-label" data-i18n="matchingScore">Matching</div></div>
+      <div class="score-card"><div id="writeScore" class="score-value">0/6</div><div class="score-label" data-i18n="writingScore">Gap fill</div></div>
+      <div class="score-card"><div id="totalScore" class="score-value">0/9</div><div class="score-label" data-i18n="totalScore">Total score</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head"><div class="number">3</div><div class="section-title" data-i18n="restartTitle">Restart</div></div>
+    <button id="clearBtn" class="secondary-btn" data-i18n="clear">Clear everything</button>
+  </section>
+</main>
+
+<div id="notice" class="notice"></div>
+<footer class="footer">LingoTotal · <span data-i18n="tagline">Learn any language your way</span></footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+const translations={
+en:{tagline:'Learn any language your way',changeLanguages:'Activities / change languages',title:'Match and complete sentences',intro:'Choose your level and topic.',choose:'Choose the level and topic',ownTopic:'Write your own topic',topicPlaceholder:'For example: travel, technology, nature, food...',beginner:'Beginner (A1–A2)',intermediate:'Intermediate (B1–B2)',advanced:'Advanced (C1–C2)',inspiration:'Need inspiration?',travel:'Travel',technology:'Technology',nature:'Nature',food:'Food',generateTitle:'Generate the exercise',generate:'Generate matching exercise',generating:'Generating your exercise…',waiting:'Your exercise will appear here.',instructions:'Select a sentence beginning and then its correct ending.',beginnings:'Sentence beginnings',endings:'Sentence endings',wrong:'That pair is not correct. Try again.',allMatched:'Excellent. You matched all three sentences.',correctSentences:'Correct sentences to practise:',completeTitle:'Now complete the missing words',completeInstructions:'Type the two important missing words in each sentence.',gapSuccess:'Excellent. Every answer is correct.',check:'Check answers',retry:'Try again',newExercise:'New exercise',matchingScore:'Matching',writingScore:'Gap fill',totalScore:'Total score',restartTitle:'Restart',clear:'Clear everything',selectLevel:'Select a level first.',enterTopic:'Write a topic or choose an example.',serverError:'The exercise could not be generated.',matchedNotice:'All sentences matched. Now complete the missing words.',hint:'Hint',missingWord:'Missing word',correctCount:'You completed {correct} of {total} answers correctly.',levelSelected:'Level selected',reading:'Playing sentence…'},
+ca:{tagline:'Aprèn qualsevol llengua a la teva manera',changeLanguages:'Activitats / canvia les llengües',title:'Emparella i completa frases',intro:'Tria el nivell i el tema.',choose:'Tria el nivell i el tema',ownTopic:'Escriu el teu propi tema',topicPlaceholder:'Per exemple: viatges, tecnologia, natura, menjar...',beginner:'Inicial (A1–A2)',intermediate:'Intermedi (B1–B2)',advanced:'Avançat (C1–C2)',inspiration:'Necessites inspiració?',travel:'Viatges',technology:'Tecnologia',nature:'Natura',food:'Menjar',generateTitle:'Genera l’exercici',generate:'Genera l’exercici d’emparellament',generating:'Generant l’exercici…',waiting:'L’exercici apareixerà aquí.',instructions:'Selecciona un inici de frase i després el final correcte.',beginnings:'Inicis de frase',endings:'Finals de frase',wrong:'Aquesta parella no és correcta. Torna-ho a provar.',allMatched:'Excel·lent. Has emparellat les tres frases.',correctSentences:'Frases correctes per practicar:',completeTitle:'Ara completa les paraules que falten',completeInstructions:'Escriu les dues paraules importants que falten a cada frase.',gapSuccess:'Excel·lent. Totes les respostes són correctes.',check:'Comprova les respostes',retry:'Torna-ho a provar',newExercise:'Exercici nou',matchingScore:'Emparellament',writingScore:'Buits',totalScore:'Puntuació total',restartTitle:'Reinicia',clear:'Esborra-ho tot',selectLevel:'Primer has de seleccionar un nivell.',enterTopic:'Escriu un tema o tria un exemple.',serverError:'No s’ha pogut generar l’exercici.',matchedNotice:'Totes les frases estan emparellades. Ara completa les paraules.',hint:'Pista',missingWord:'Paraula que falta',correctCount:'Has completat correctament {correct} de {total} respostes.',levelSelected:'Nivell seleccionat',reading:'Reproduint la frase…'},
+es:{tagline:'Aprende cualquier idioma a tu manera',changeLanguages:'Actividades / cambiar idiomas',title:'Empareja y completa frases',intro:'Elige el nivel y el tema.',choose:'Elige el nivel y el tema',ownTopic:'Escribe tu propio tema',topicPlaceholder:'Por ejemplo: viajes, tecnología, naturaleza, comida...',beginner:'Inicial (A1–A2)',intermediate:'Intermedio (B1–B2)',advanced:'Avanzado (C1–C2)',inspiration:'¿Necesitas inspiración?',travel:'Viajes',technology:'Tecnología',nature:'Naturaleza',food:'Comida',generateTitle:'Genera el ejercicio',generate:'Generar ejercicio de emparejamiento',generating:'Generando el ejercicio…',waiting:'El ejercicio aparecerá aquí.',instructions:'Selecciona un inicio de frase y después su final correcto.',beginnings:'Inicios de frase',endings:'Finales de frase',wrong:'Esa pareja no es correcta. Inténtalo de nuevo.',allMatched:'Excelente. Has emparejado las tres frases.',correctSentences:'Frases correctas para practicar:',completeTitle:'Ahora completa las palabras que faltan',completeInstructions:'Escribe las dos palabras importantes que faltan en cada frase.',gapSuccess:'Excelente. Todas las respuestas son correctas.',check:'Comprobar respuestas',retry:'Intentarlo de nuevo',newExercise:'Ejercicio nuevo',matchingScore:'Emparejamiento',writingScore:'Huecos',totalScore:'Puntuación total',restartTitle:'Reiniciar',clear:'Borrar todo',selectLevel:'Primero selecciona un nivel.',enterTopic:'Escribe un tema o elige un ejemplo.',serverError:'No se ha podido generar el ejercicio.',matchedNotice:'Todas las frases están emparejadas. Ahora completa las palabras.',hint:'Pista',missingWord:'Palabra que falta',correctCount:'Has completado correctamente {correct} de {total} respuestas.',levelSelected:'Nivel seleccionado',reading:'Reproduciendo la frase…'},
+fr:{tagline:'Apprenez n’importe quelle langue à votre façon',changeLanguages:'Activités / changer les langues',title:'Associez et complétez les phrases',intro:'Choisissez votre niveau et votre thème.',choose:'Choisissez le niveau et le thème',ownTopic:'Écrivez votre propre thème',topicPlaceholder:'Par exemple : voyages, technologie, nature, alimentation...',beginner:'Débutant (A1–A2)',intermediate:'Intermédiaire (B1–B2)',advanced:'Avancé (C1–C2)',inspiration:'Besoin d’inspiration ?',travel:'Voyages',technology:'Technologie',nature:'Nature',food:'Alimentation',generateTitle:'Générez l’exercice',generate:'Générer l’exercice d’association',generating:'Génération de l’exercice…',waiting:'L’exercice apparaîtra ici.',instructions:'Sélectionnez un début de phrase, puis sa fin correcte.',beginnings:'Débuts de phrase',endings:'Fins de phrase',wrong:'Cette association est incorrecte. Réessayez.',allMatched:'Excellent. Vous avez associé les trois phrases.',correctSentences:'Phrases correctes à pratiquer :',completeTitle:'Complétez maintenant les mots manquants',completeInstructions:'Saisissez les deux mots importants manquants dans chaque phrase.',gapSuccess:'Excellent. Toutes les réponses sont correctes.',check:'Vérifier les réponses',retry:'Réessayer',newExercise:'Nouvel exercice',matchingScore:'Association',writingScore:'Texte à trous',totalScore:'Score total',restartTitle:'Recommencer',clear:'Tout effacer',selectLevel:'Choisissez d’abord un niveau.',enterTopic:'Écrivez un thème ou choisissez un exemple.',serverError:'Impossible de générer l’exercice.',matchedNotice:'Toutes les phrases sont associées. Complétez maintenant les mots manquants.',hint:'Indice',missingWord:'Mot manquant',correctCount:'Vous avez correctement complété {correct} réponse(s) sur {total}.',levelSelected:'Niveau sélectionné',reading:'Lecture de la phrase…'},
+de:{tagline:'Lerne jede Sprache auf deine Art',changeLanguages:'Aktivitäten / Sprachen ändern',title:'Sätze zuordnen und ergänzen',intro:'Wähle Niveau und Thema.',choose:'Niveau und Thema wählen',ownTopic:'Eigenes Thema eingeben',topicPlaceholder:'Zum Beispiel: Reisen, Technologie, Natur, Essen ...',beginner:'Anfänger (A1–A2)',intermediate:'Mittelstufe (B1–B2)',advanced:'Fortgeschritten (C1–C2)',inspiration:'Brauchst du Inspiration?',travel:'Reisen',technology:'Technologie',nature:'Natur',food:'Essen',generateTitle:'Übung erstellen',generate:'Zuordnungsübung erstellen',generating:'Übung wird erstellt…',waiting:'Die Übung erscheint hier.',instructions:'Wähle einen Satzanfang und danach das passende Ende.',beginnings:'Satzanfänge',endings:'Satzenden',wrong:'Dieses Paar ist nicht richtig. Versuche es erneut.',allMatched:'Sehr gut. Du hast alle drei Sätze zugeordnet.',correctSentences:'Richtige Sätze zum Üben:',completeTitle:'Ergänze nun die fehlenden Wörter',completeInstructions:'Gib die zwei wichtigen fehlenden Wörter in jedem Satz ein.',gapSuccess:'Sehr gut. Alle Antworten sind richtig.',check:'Antworten prüfen',retry:'Erneut versuchen',newExercise:'Neue Übung',matchingScore:'Zuordnung',writingScore:'Lückentext',totalScore:'Gesamtpunktzahl',restartTitle:'Neu starten',clear:'Alles löschen',selectLevel:'Wähle zuerst ein Niveau.',enterTopic:'Gib ein Thema ein oder wähle ein Beispiel.',serverError:'Die Übung konnte nicht erstellt werden.',matchedNotice:'Alle Sätze sind zugeordnet. Ergänze nun die fehlenden Wörter.',hint:'Hinweis',missingWord:'Fehlendes Wort',correctCount:'Du hast {correct} von {total} Antworten richtig ergänzt.',levelSelected:'Niveau gewählt',reading:'Satz wird vorgelesen…'},
+it:{tagline:'Impara qualsiasi lingua a modo tuo',changeLanguages:'Attività / cambia lingue',title:'Abbina e completa le frasi',intro:'Scegli il livello e l’argomento.',choose:'Scegli il livello e l’argomento',ownTopic:'Scrivi il tuo argomento',topicPlaceholder:'Per esempio: viaggi, tecnologia, natura, cibo...',beginner:'Principiante (A1–A2)',intermediate:'Intermedio (B1–B2)',advanced:'Avanzato (C1–C2)',inspiration:'Hai bisogno di ispirazione?',travel:'Viaggi',technology:'Tecnologia',nature:'Natura',food:'Cibo',generateTitle:'Genera l’esercizio',generate:'Genera esercizio di abbinamento',generating:'Generazione dell’esercizio…',waiting:'L’esercizio apparirà qui.',instructions:'Seleziona un inizio di frase e poi la conclusione corretta.',beginnings:'Inizi di frase',endings:'Finali di frase',wrong:'Questo abbinamento non è corretto. Riprova.',allMatched:'Ottimo. Hai abbinato tutte e tre le frasi.',correctSentences:'Frasi corrette da praticare:',completeTitle:'Ora completa le parole mancanti',completeInstructions:'Scrivi le due parole importanti mancanti in ogni frase.',gapSuccess:'Ottimo. Tutte le risposte sono corrette.',check:'Controlla le risposte',retry:'Riprova',newExercise:'Nuovo esercizio',matchingScore:'Abbinamento',writingScore:'Completamento',totalScore:'Punteggio totale',restartTitle:'Ricomincia',clear:'Cancella tutto',selectLevel:'Seleziona prima un livello.',enterTopic:'Scrivi un argomento o scegli un esempio.',serverError:'Non è stato possibile generare l’esercizio.',matchedNotice:'Tutte le frasi sono abbinate. Ora completa le parole mancanti.',hint:'Suggerimento',missingWord:'Parola mancante',correctCount:'Hai completato correttamente {correct} risposte su {total}.',levelSelected:'Livello selezionato',reading:'Riproduzione della frase…'},
+pt:{tagline:'Aprenda qualquer idioma à sua maneira',changeLanguages:'Atividades / mudar idiomas',title:'Associe e complete frases',intro:'Escolha o nível e o tema.',choose:'Escolha o nível e o tema',ownTopic:'Escreva o seu próprio tema',topicPlaceholder:'Por exemplo: viagens, tecnologia, natureza, comida...',beginner:'Iniciante (A1–A2)',intermediate:'Intermédio (B1–B2)',advanced:'Avançado (C1–C2)',inspiration:'Precisa de inspiração?',travel:'Viagens',technology:'Tecnologia',nature:'Natureza',food:'Comida',generateTitle:'Gere o exercício',generate:'Gerar exercício de associação',generating:'A gerar o exercício…',waiting:'O exercício aparecerá aqui.',instructions:'Selecione um início de frase e depois o final correto.',beginnings:'Inícios de frase',endings:'Finais de frase',wrong:'Esta associação não está correta. Tente novamente.',allMatched:'Excelente. Associou as três frases.',correctSentences:'Frases corretas para praticar:',completeTitle:'Agora complete as palavras em falta',completeInstructions:'Escreva as duas palavras importantes em falta em cada frase.',gapSuccess:'Excelente. Todas as respostas estão corretas.',check:'Verificar respostas',retry:'Tentar novamente',newExercise:'Novo exercício',matchingScore:'Associação',writingScore:'Lacunas',totalScore:'Pontuação total',restartTitle:'Reiniciar',clear:'Apagar tudo',selectLevel:'Primeiro selecione um nível.',enterTopic:'Escreva um tema ou escolha um exemplo.',serverError:'Não foi possível gerar o exercício.',matchedNotice:'Todas as frases estão associadas. Agora complete as palavras em falta.',hint:'Dica',missingWord:'Palavra em falta',correctCount:'Completou corretamente {correct} de {total} respostas.',levelSelected:'Nível selecionado',reading:'A reproduzir a frase…'},
+eu:{tagline:'Ikasi edozein hizkuntza zure erara',changeLanguages:'Jarduerak / hizkuntzak aldatu',title:'Lotu eta osatu esaldiak',intro:'Aukeratu maila eta gaia.',choose:'Aukeratu maila eta gaia',ownTopic:'Idatzi zure gaia',topicPlaceholder:'Adibidez: bidaiak, teknologia, natura, janaria...',beginner:'Hasiberria (A1–A2)',intermediate:'Tartekoa (B1–B2)',advanced:'Aurreratua (C1–C2)',inspiration:'Inspirazioa behar duzu?',travel:'Bidaiak',technology:'Teknologia',nature:'Natura',food:'Janaria',generateTitle:'Sortu ariketa',generate:'Sortu lotzeko ariketa',generating:'Ariketa sortzen…',waiting:'Ariketa hemen agertuko da.',instructions:'Aukeratu esaldi baten hasiera eta gero amaiera zuzena.',beginnings:'Esaldien hasierak',endings:'Esaldien amaierak',wrong:'Bikote hori ez da zuzena. Saiatu berriro.',allMatched:'Oso ondo. Hiru esaldiak lotu dituzu.',correctSentences:'Praktikatzeko esaldi zuzenak:',completeTitle:'Osatu falta diren hitzak',completeInstructions:'Idatzi esaldi bakoitzean falta diren bi hitz garrantzitsuak.',gapSuccess:'Oso ondo. Erantzun guztiak zuzenak dira.',check:'Egiaztatu erantzunak',retry:'Saiatu berriro',newExercise:'Ariketa berria',matchingScore:'Lotzea',writingScore:'Hutsuneak',totalScore:'Puntuazioa guztira',restartTitle:'Berrabiarazi',clear:'Garbitu dena',selectLevel:'Aukeratu maila lehenik.',enterTopic:'Idatzi gai bat edo aukeratu adibide bat.',serverError:'Ezin izan da ariketa sortu.',matchedNotice:'Esaldi guztiak lotuta daude. Orain osatu falta diren hitzak.',hint:'Pista',missingWord:'Falta den hitza',correctCount:'{total} erantzunetatik {correct} zuzen osatu dituzu.',levelSelected:'Maila aukeratuta',reading:'Esaldia erreproduzitzen…'},
+ja:{tagline:'好きな方法でどんな言語でも学ぼう',changeLanguages:'アクティビティ / 言語を変更',title:'文を組み合わせて完成させる',intro:'レベルとトピックを選んでください。',choose:'レベルとトピックを選ぶ',ownTopic:'自分のトピックを書く',topicPlaceholder:'例：旅行、テクノロジー、自然、食べ物...',beginner:'初級 (A1–A2)',intermediate:'中級 (B1–B2)',advanced:'上級 (C1–C2)',inspiration:'例から選ぶこともできます。',travel:'旅行',technology:'テクノロジー',nature:'自然',food:'食べ物',generateTitle:'練習を作成',generate:'マッチング練習を作成',generating:'練習を作成中…',waiting:'練習はここに表示されます。',instructions:'文の前半を選び、次に正しい後半を選んでください。',beginnings:'文の前半',endings:'文の後半',wrong:'その組み合わせは正しくありません。もう一度試してください。',allMatched:'よくできました。3文すべて正しく組み合わせました。',correctSentences:'練習する正しい文：',completeTitle:'次に空欄を完成させてください',completeInstructions:'各文の重要な2語を入力してください。',gapSuccess:'よくできました。すべて正解です。',check:'答えを確認',retry:'もう一度',newExercise:'新しい練習',matchingScore:'マッチング',writingScore:'穴埋め',totalScore:'合計点',restartTitle:'リセット',clear:'すべて消去',selectLevel:'最初にレベルを選んでください。',enterTopic:'トピックを書くか、例を選んでください。',serverError:'練習を作成できませんでした。',matchedNotice:'すべての文を組み合わせました。次に空欄を完成させてください。',hint:'ヒント',missingWord:'空欄',correctCount:'{total}問中{correct}問正解です。',levelSelected:'レベルを選択しました',reading:'文を再生中…'},
+ar:{tagline:'تعلّم أي لغة بطريقتك',changeLanguages:'الأنشطة / تغيير اللغات',title:'طابق الجمل وأكملها',intro:'اختر المستوى والموضوع.',choose:'اختر المستوى والموضوع',ownTopic:'اكتب موضوعك',topicPlaceholder:'مثلاً: السفر، التكنولوجيا، الطبيعة، الطعام...',beginner:'مبتدئ (A1–A2)',intermediate:'متوسط (B1–B2)',advanced:'متقدم (C1–C2)',inspiration:'هل تحتاج إلى فكرة؟',travel:'السفر',technology:'التكنولوجيا',nature:'الطبيعة',food:'الطعام',generateTitle:'أنشئ التمرين',generate:'أنشئ تمرين المطابقة',generating:'جارٍ إنشاء التمرين…',waiting:'سيظهر التمرين هنا.',instructions:'اختر بداية الجملة ثم النهاية الصحيحة.',beginnings:'بدايات الجمل',endings:'نهايات الجمل',wrong:'هذه المطابقة غير صحيحة. حاول مرة أخرى.',allMatched:'ممتاز. طابقت الجمل الثلاث.',correctSentences:'الجمل الصحيحة للتدريب:',completeTitle:'أكمل الآن الكلمات الناقصة',completeInstructions:'اكتب الكلمتين المهمتين الناقصتين في كل جملة.',gapSuccess:'ممتاز. كل الإجابات صحيحة.',check:'تحقق من الإجابات',retry:'حاول مرة أخرى',newExercise:'تمرين جديد',matchingScore:'المطابقة',writingScore:'ملء الفراغات',totalScore:'المجموع',restartTitle:'إعادة البدء',clear:'مسح الكل',selectLevel:'اختر مستوى أولاً.',enterTopic:'اكتب موضوعًا أو اختر مثالًا.',serverError:'تعذر إنشاء التمرين.',matchedNotice:'تمت مطابقة جميع الجمل. أكمل الآن الكلمات الناقصة.',hint:'تلميح',missingWord:'الكلمة الناقصة',correctCount:'أكملت {correct} من {total} إجابات بشكل صحيح.',levelSelected:'تم اختيار المستوى',reading:'جارٍ تشغيل الجملة…'}
+};
+
+const uiNames={en:'English',ca:'Català',es:'Español',fr:'Français',de:'Deutsch',it:'Italiano',pt:'Português',eu:'Euskara',ja:'日本語',ar:'العربية'};
+const targetNames={English:'English',Catalan:'Català',Spanish:'Español',French:'Français',German:'Deutsch',Italian:'Italiano',Portuguese:'Português',Basque:'Euskara',Japanese:'日本語',Arabic:'العربية'};
+const voiceLocales={English:'en-GB',Catalan:'ca-ES',Spanish:'es-ES',French:'fr-FR',German:'de-DE',Italian:'it-IT',Portuguese:'pt-PT',Basque:'eu-ES',Japanese:'ja-JP',Arabic:'ar-SA'};
+const validUI=Object.keys(uiNames), validTargets=Object.keys(targetNames);
+const params=new URLSearchParams(location.search);
+let uiLanguage=params.get('ui')||localStorage.getItem('lingototal_ui_language')||'en';
+let targetLanguage=params.get('target')||localStorage.getItem('lingototal_target_language')||'English';
+if(!validUI.includes(uiLanguage))uiLanguage='en';
+if(!validTargets.includes(targetLanguage))targetLanguage='English';
+localStorage.setItem('lingototal_ui_language',uiLanguage);
+localStorage.setItem('lingototal_target_language',targetLanguage);
+
+const $=id=>document.getElementById(id);
+const themeInput=$('themeInput');
+let selectedLevel='',currentExercise=null,correctPairs=[],matches=0,selectedBeginning=null,gapData=[];
+
+function tr(key){return (translations[uiLanguage]||translations.en)[key]||translations.en[key]||key}
+function applyLanguage(){
+  document.documentElement.lang=uiLanguage;
+  document.documentElement.dir=uiLanguage==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=tr(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));
+  document.querySelectorAll('.example').forEach(btn=>btn.dataset.theme=tr(btn.dataset.themeKey));
+  $('languagePair').textContent=(uiNames[uiLanguage]||uiLanguage)+' → '+(targetNames[targetLanguage]||targetLanguage);
+  document.title='LingoTotal · '+tr('title');
+  if(!currentExercise)$('exerciseIntro').textContent=tr('waiting');
+  const targetRTL=targetLanguage==='Arabic';
+  ['matching','correctList','gapSection'].forEach(id=>$(id)?.classList.toggle('target-rtl',targetRTL));
+}
+function notice(message,type='info'){
+  const n=$('notice');n.textContent=message;n.className='notice show '+type;
+  clearTimeout(notice.timer);notice.timer=setTimeout(()=>n.classList.remove('show'),3200)
+}
+function setLoading(on){$('generateBtn').disabled=on;$('loading').style.display=on?'block':'none'}
+function normalise(s){return String(s||'').toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[.,!?;:«»"'“”‘’()؟،。]/g,'').trim()}
+function shuffle(array){const a=[...array];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+themeInput.addEventListener('focus',()=>themeInput.classList.remove('attention'),{once:true});
+themeInput.addEventListener('input',()=>themeInput.classList.remove('attention'),{once:true});
+
+document.querySelectorAll('.level').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.level').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');selectedLevel=btn.dataset.level;notice(tr('levelSelected')+': '+btn.textContent,'info')
+}));
+document.querySelectorAll('.example').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.example').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');themeInput.value=btn.dataset.theme;themeInput.classList.remove('attention')
+}));
+
+async function callGeminiAPI(prompt){
+  const response=await fetch('/.netlify/functions/gemini',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt,model:'gemini-2.5-flash',temperature:.75})
+  });
+  let data;try{data=await response.json()}catch{throw new Error('Invalid server response')}
+  if(!response.ok)throw new Error(data?.error||'Server error');
+  const text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!text)throw new Error('Empty AI response');
+  return text
+}
+function parseExercise(text){
+  const clean=String(text).replace(/```(?:text|json)?/gi,'').replace(/```/g,'').trim();
+  const get=label=>clean.match(new RegExp('^'+label+'\\s*:\\s*(.+)$','mi'))?.[1]?.trim();
+  const beginnings=[1,2,3].map(i=>get('BEGINNING '+i));
+  const endings=[1,2,3].map(i=>get('ENDING '+i));
+  const pairLine=get('CORRECT PAIRS');
+  if(beginnings.some(x=>!x)||endings.some(x=>!x)||!pairLine)throw new Error('AI format error');
+  const pairs=[];const re=/BEGINNING\s*(\d)\s*(?:WITH|[-–—>]+)\s*ENDING\s*(\d)/gi;let m;
+  while((m=re.exec(pairLine)))pairs.push({b:+m[1]-1,e:+m[2]-1});
+  return {beginnings,endings,pairs:pairs.length===3?pairs:[{b:0,e:0},{b:1,e:1},{b:2,e:2}]}
+}
+function renderExercise(ex){
+  currentExercise=ex;correctPairs=ex.pairs;matches=0;selectedBeginning=null;
+  $('exerciseIntro').textContent=tr('instructions');$('matching').style.display='block';
+  $('wrongFeedback').style.display='none';$('correctFeedback').style.display='none';
+  $('correctList').style.display='none';$('gapSection').style.display='none';$('score').style.display='none';
+  const bList=$('beginningsList'),eList=$('endingsList');bList.innerHTML='';eList.innerHTML='';
+  ex.beginnings.forEach((text,i)=>{
+    const btn=document.createElement('button');btn.className='match-item';btn.textContent=text;btn.dataset.index=i;
+    btn.addEventListener('click',()=>selectBeginning(btn));bList.appendChild(btn)
+  });
+  shuffle(ex.endings.map((text,i)=>({text,i}))).forEach(item=>{
+    const btn=document.createElement('button');btn.className='match-item';btn.textContent=item.text;btn.dataset.index=item.i;
+    btn.addEventListener('click',()=>selectEnding(btn));eList.appendChild(btn)
+  })
+}
+function selectBeginning(btn){
+  if(btn.className.includes('matched-'))return;
+  document.querySelectorAll('#beginningsList .match-item').forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');selectedBeginning=btn
+}
+function selectEnding(btn){
+  if(!selectedBeginning||btn.className.includes('matched-'))return;
+  const b=+selectedBeginning.dataset.index,e=+btn.dataset.index;
+  const ok=correctPairs.some(p=>p.b===b&&p.e===e);
+  if(!ok){
+    $('wrongFeedback').style.display='block';selectedBeginning.classList.remove('selected');selectedBeginning=null;
+    setTimeout(()=>$('wrongFeedback').style.display='none',1500);return
+  }
+  const cls='matched-'+matches;selectedBeginning.classList.add(cls);selectedBeginning.classList.remove('selected');
+  btn.classList.add(cls);selectedBeginning.disabled=true;btn.disabled=true;matches++;selectedBeginning=null;
+  if(matches===3)completeMatching()
+}
+function fullSentence(p){return (currentExercise.beginnings[p.b]+' '+currentExercise.endings[p.e]).replace(/\s+([,.!?;:])/g,'$1')}
+function completeMatching(){
+  $('correctFeedback').style.display='block';$('correctList').style.display='block';$('gapSection').style.display='block';
+  $('score').style.display='grid';$('matchScore').textContent='3/3';notice(tr('matchedNotice'),'success');
+  const rows=$('correctRows');rows.innerHTML='';
+  correctPairs.forEach(p=>{
+    const sentence=fullSentence(p);
+    const row=document.createElement('div');row.className='correct-row';
+    const span=document.createElement('span');span.textContent=sentence;
+    const sound=document.createElement('button');sound.className='sound-btn';sound.textContent='🔊';
+    sound.addEventListener('click',()=>speak(sentence));row.append(span,sound);rows.appendChild(row)
+  });
+  buildGapExercise()
+}
+/* =========================================================
+   SHARED LINGOTOTAL CLOUD TEXT-TO-SPEECH CLIENT
+   Calls /.netlify/functions/tts.
+   Falls back to the device voice only if cloud TTS fails.
+   ========================================================= */
+const ltAudioCache = new Map();
+let ltCurrentAudio = null;
+let ltAudioPaused = false;
+
+async function cloudSpeak(text, languageCode='en-GB', speakingRate=1, element=null){
+  const cleanText=String(text||'').trim();
+  if(!cleanText)return;
+
+  const safeRate=Math.min(1.2,Math.max(.75,Number(speakingRate)||1));
+  const cacheKey=`${languageCode}|${safeRate}|${cleanText}`;
+
+  try{
+    cloudStop(false);
+
+    let audioSrc=ltAudioCache.get(cacheKey);
+
+    if(!audioSrc){
+      const response=await fetch('/.netlify/functions/tts',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          text:cleanText,
+          languageCode,
+          speakingRate:safeRate
+        })
+      });
+
+      let data;
+      try{data=await response.json()}
+      catch{throw new Error('Invalid audio server response')}
+
+      if(!response.ok)throw new Error(data?.error||'Audio server error');
+      if(!data?.audioContent)throw new Error('No audio returned');
+
+      audioSrc=`data:${data.mimeType||'audio/mpeg'};base64,${data.audioContent}`;
+      ltAudioCache.set(cacheKey,audioSrc);
+    }
+
+    ltCurrentAudio=new Audio(audioSrc);
+    ltAudioPaused=false;
+
+    if(element){
+      document.querySelectorAll('.sentence.playing').forEach(x=>x.classList.remove('playing'));
+      element.classList.add('playing');
+      const clear=()=>element.classList.remove('playing');
+      ltCurrentAudio.addEventListener('ended',clear,{once:true});
+      ltCurrentAudio.addEventListener('error',clear,{once:true});
+    }
+
+    await ltCurrentAudio.play();
+
+  }catch(err){
+    console.error('Cloud TTS error:',err);
+
+    /* Emergency fallback only */
+    if('speechSynthesis' in window){
+      try{
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(cleanText);
+        u.lang=languageCode;
+        u.rate=safeRate;
+        if(element){
+          element.classList.add('playing');
+          const clear=()=>element.classList.remove('playing');
+          u.onend=clear;
+          u.onerror=clear;
+        }
+        speechSynthesis.speak(u);
+      }catch(fallbackError){
+        console.error('Browser speech fallback error:',fallbackError);
+      }
+    }
+  }
+}
+
+function cloudPauseResume(){
+  if(!ltCurrentAudio)return;
+  if(ltCurrentAudio.paused){
+    ltCurrentAudio.play().catch(console.error);
+    ltAudioPaused=false;
+  }else{
+    ltCurrentAudio.pause();
+    ltAudioPaused=true;
+  }
+}
+
+function cloudStop(reset=true){
+  if(ltCurrentAudio){
+    try{
+      ltCurrentAudio.pause();
+      if(reset)ltCurrentAudio.currentTime=0;
+    }catch{}
+  }
+  ltAudioPaused=false;
+  document.querySelectorAll('.sentence.playing').forEach(x=>x.classList.remove('playing'));
+  if('speechSynthesis' in window){
+    try{speechSynthesis.cancel()}catch{}
+  }
+}
+
+function speak(text){
+  notice(tr('reading'),'info');
+  return cloudSpeak(text,voiceLocales[targetLanguage]||'en-GB',.9);
+}
+function thematicCandidates(sentence){
+  const stop=new Set(['the','and','but','that','this','with','from','have','has','are','was','were','for','you','your','their',
+    'el','la','els','les','un','una','uns','unes','de','del','dels','i','que','amb','per','es','al',
+    'el','la','los','las','un','una','unos','unas','de','del','y','que','con','por','para','es',
+    'le','la','les','un','une','des','de','du','et','que','avec','pour','est','sont',
+    'der','die','das','ein','eine','und','mit','von','für','ist','sind',
+    'il','lo','la','i','gli','le','un','una','e','o','di','in','a','per','con','è','sono',
+    'o','a','os','as','um','uma','e','ou','de','em','para','com','é','são']);
+  return sentence.split(/\s+/).map((w,i)=>({w,i,core:normalise(w)}))
+    .filter(x=>x.core.length>=4&&!stop.has(x.core));
+}
+function buildGapExercise(){
+  gapData=[];$('gapExercise').innerHTML='';$('gapSuccess').style.display='none';$('gapError').style.display='none';
+  correctPairs.forEach((p,si)=>{
+    const sentence=fullSentence(p);
+    const words=sentence.split(/\s+/);
+    let candidates=thematicCandidates(sentence);
+    if(candidates.length<2)candidates=words.map((w,i)=>({w,i,core:normalise(w)})).filter(x=>x.core.length>2);
+    const chosen=shuffle(candidates).slice(0,Math.min(2,candidates.length)).sort((a,b)=>a.i-b.i);
+    const omitted=new Map(chosen.map(x=>[x.i,x.w]));
+    const card=document.createElement('div');card.className='gap-card';
+    const text=document.createElement('div');text.className='gap-text';
+    text.textContent=words.map((w,i)=>omitted.has(i)?'__________':w).join(' ');card.appendChild(text);
+    chosen.forEach((x,gi)=>{
+      const row=document.createElement('div');row.className='gap-input-row';
+      const input=document.createElement('input');input.type='text';input.placeholder=tr('missingWord');input.id=`gap-${si}-${gi}`;
+      const hint=document.createElement('button');hint.className='hint-btn';hint.textContent=tr('hint');
+      hint.addEventListener('click',()=>notice(`${tr('hint')}: ${x.w.charAt(0)}…`,'info'));
+      row.append(input,hint);card.appendChild(row);gapData.push({id:input.id,answer:x.w})
+    });
+    $('gapExercise').appendChild(card)
+  });
+  $('writeScore').textContent=`0/${gapData.length}`;$('totalScore').textContent=`3/${3+gapData.length}`
+}
+
+$('generateBtn').addEventListener('click',async()=>{
+  const theme=themeInput.value.trim();
+  if(!theme)return notice(tr('enterTopic'),'error');
+  if(!selectedLevel)return notice(tr('selectLevel'),'error');
+  const levelText={
+    beginner:'CEFR A1-A2. Use clear, common everyday language and short natural sentences.',
+    intermediate:'CEFR B1-B2. Use natural everyday language with moderately complex but conversational phrasing.',
+    advanced:'CEFR C1-C2. Use natural colloquial everyday language, idiomatic and authentic phrasing that learners may not often meet in textbooks. Avoid literary, formal, pompous or essay-like language.'
+  }[selectedLevel];
+  const languageRules=targetLanguage==='Japanese'
+    ?'For Japanese, use completely natural Japanese and do not insert artificial spaces inside normal Japanese text.'
+    :targetLanguage==='Arabic'
+    ?'For Arabic, use natural Arabic script and punctuation; do not insert artificial spaces inside words.'
+    :targetLanguage==='Basque'
+    ?'For Basque, use natural standard Euskara and idiomatic word order.'
+    :'Use standard spelling, punctuation, contractions, elisions and apostrophes wherever the language requires them.';
+  const prompt=`Create a language-learning matching exercise in ${targetLanguage}.
+Topic: "${theme}"
+Level: ${levelText}
+
+${languageRules}
+
+Create exactly THREE sentence beginnings and THREE sentence endings.
+Each beginning must match only ONE ending to form a natural, complete, logical sentence clearly related to the topic.
+Make the three complete sentences meaningfully different.
+Keep ALL learner-facing sentence content in ${targetLanguage}.
+Use correct punctuation and apostrophes/contractions where appropriate.
+
+Return exactly this format, keeping these English machine labels:
+BEGINNING 1: ...
+BEGINNING 2: ...
+BEGINNING 3: ...
+ENDING 1: ...
+ENDING 2: ...
+ENDING 3: ...
+CORRECT PAIRS: Beginning 1 with Ending X, Beginning 2 with Ending Y, Beginning 3 with Ending Z
+
+Do not add explanations, markdown or quotation marks.`;
+  setLoading(true);
+  try{renderExercise(parseExercise(await callGeminiAPI(prompt)))}
+  catch(err){console.error(err);notice(tr('serverError')+' '+err.message,'error')}
+  finally{setLoading(false)}
+});
+
+$('checkBtn').addEventListener('click',()=>{
+  let correct=0;
+  gapData.forEach(g=>{
+    const input=$(g.id),ok=normalise(input.value)===normalise(g.answer);
+    input.style.borderColor=ok?'#198754':'#c83d4f';input.style.background=ok?'#eef9f3':'#fff1f3';if(ok)correct++
+  });
+  $('writeScore').textContent=`${correct}/${gapData.length}`;$('totalScore').textContent=`${3+correct}/${3+gapData.length}`;
+  if(correct===gapData.length){$('gapSuccess').style.display='block';$('gapError').style.display='none';notice(tr('gapSuccess'),'success')}
+  else{$('gapSuccess').style.display='none';$('gapError').style.display='block';$('gapError').textContent=tr('correctCount').replace('{correct}',correct).replace('{total}',gapData.length)}
+});
+$('retryBtn').addEventListener('click',()=>{
+  gapData.forEach(g=>{const i=$(g.id);i.value='';i.style.borderColor='';i.style.background=''});
+  $('gapSuccess').style.display='none';$('gapError').style.display='none';$('writeScore').textContent=`0/${gapData.length}`;$('totalScore').textContent=`3/${3+gapData.length}`
+});
+$('newBtn').addEventListener('click',()=>$('generateBtn').click());
+$('clearBtn').addEventListener('click',()=>{
+  themeInput.value='';themeInput.classList.add('attention');selectedLevel='';currentExercise=null;matches=0;gapData=[];
+  document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));
+  $('matching').style.display='none';$('score').style.display='none';$('exerciseIntro').textContent=tr('waiting')
+});
+applyLanguage();
+});
+</script>
+</body>
+</html>

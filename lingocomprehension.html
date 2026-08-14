@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LingoTotal · Listen and understand</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1267d6;--dark:#084ca8;--light:#e8f2ff;--cyan:#25b7d3;--ink:#172033;--muted:#607080;--border:#d9e2ef;--success:#198754;--danger:#c83d4f}
+*{box-sizing:border-box}body{margin:0;font-family:'Quicksand',sans-serif;color:var(--ink);background:linear-gradient(#eaf3ff,#f5f8fc);line-height:1.55}
+button,input,select{font:inherit}.banner{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:12px 24px;background:linear-gradient(135deg,var(--dark),var(--blue),var(--cyan));color:white;box-shadow:0 3px 12px #0002}
+.brand-wrap{display:flex;align-items:center;gap:12px}.mark{width:48px;height:48px;border-radius:14px;background:white;color:var(--blue);display:grid;place-items:center;font-weight:800}.brand{font-size:1.35rem;font-weight:800;letter-spacing:.05em}.tag{font-size:.78rem;opacity:.9}
+.langs{display:flex;gap:10px;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:3px}.field label{font-size:.72rem;font-weight:700}.field select{min-width:150px;padding:8px;border-radius:9px;border:1px solid #fff8}
+.page{width:min(780px,calc(100% - 22px));margin:20px auto 40px}.panel{background:white;border:1px solid var(--border);border-radius:18px;box-shadow:0 10px 28px rgba(26,69,120,.12);padding:24px;margin-bottom:18px}.hero{background:linear-gradient(135deg,#fff,#edf5ff)}h1{margin:0 0 8px;font-size:clamp(1.6rem,4vw,2.2rem)}.hero p{margin:0;color:var(--muted)}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:16px}.num{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:white;font-weight:800}.title{font-weight:800;font-size:1.15rem}
+label{font-weight:700;display:block;margin-bottom:6px}input[type=text]{width:100%;padding:12px;border:2px solid var(--border);border-radius:11px}input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px #1267d622}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}.examples{grid-template-columns:repeat(4,1fr)}.choice{padding:11px;border:2px solid var(--border);border-radius:10px;background:white;font-weight:700;cursor:pointer}.choice:hover,.choice.selected{border-color:var(--blue);background:var(--light);color:var(--dark)}
+.help{margin-top:14px;color:var(--muted);font-size:.88rem}.primary,.secondary{padding:13px 18px;border-radius:11px;font-weight:800;cursor:pointer}.primary{width:100%;border:0;background:linear-gradient(135deg,var(--dark),var(--blue));color:white}.secondary{background:white;border:1px solid var(--border)}
+.loading{display:none;text-align:center;color:var(--muted);margin:15px}.spinner{width:28px;height:28px;border:3px solid #dbe7f7;border-top-color:var(--blue);border-radius:50%;margin:0 auto 8px;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.exercise{display:none}.audio{padding:18px;text-align:center;border:1px solid var(--border);border-radius:14px;background:linear-gradient(135deg,#eef5ff,#f8fbff)}.audio .icon{font-size:2.4rem}.audio p{color:var(--muted)}.controls,.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.controls .primary,.actions .primary{width:auto}
+.question{margin-top:14px;padding:16px;border:1px solid var(--border);border-radius:12px;background:#f6f9fc}.qtitle{font-weight:800;margin-bottom:9px}.option{display:block;width:100%;text-align:left;margin-top:8px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer}.option.selected{border-color:var(--blue);background:var(--light)}.option.correct{border-color:var(--success);background:#e9f7ef}.option.incorrect{border-color:var(--danger);background:#fff0f2}
+.feedback{display:none;margin-top:14px;padding:12px;border-radius:10px;font-weight:700}.ok{background:#e9f7ef;color:#136c45;border:1px solid #9bd2b5}.bad{background:#fff0f2;color:#a72f40;border:1px solid #efb6bf}
+.score{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.scorebox{text-align:center;padding:14px;border:1px solid var(--border);border-radius:11px;background:#f6f9fc}.scoreval{font-size:1.4rem;font-weight:800;color:var(--blue)}
+.transcript{display:none;margin-top:18px;padding:18px;border-left:5px solid #f2c94c;border-radius:12px;background:#fffbea}.transcript p{white-space:pre-wrap}.sentence{display:inline;cursor:pointer;border-radius:5px;padding:1px 2px}.sentence:hover{background:#fff1a8}.sentence.playing{background:#ffe36e}.sentence-help{margin-top:14px;color:var(--muted);font-size:.88rem}.notice{position:fixed;right:18px;top:96px;padding:12px 15px;border-radius:10px;color:white;font-weight:700;transform:translateX(130%);transition:.25s;z-index:20}.notice.show{transform:translateX(0)}.notice.info{background:var(--blue)}.notice.success{background:var(--success)}.notice.error{background:var(--danger)}
+@media(max-width:700px){.banner{align-items:flex-start;flex-direction:column}.langs{width:100%;display:grid;grid-template-columns:1fr 1fr}.field select{width:100%;min-width:0}.grid{grid-template-columns:1fr}.examples{grid-template-columns:1fr 1fr}.score{grid-template-columns:1fr}}
+
+.header-tools{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.language-pair{padding:8px 12px;border:1px solid rgba(255,255,255,.5);border-radius:9px;background:rgba(255,255,255,.12);font-size:.78rem;font-weight:700}
+.home-link{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:9px;background:#fff;color:#084ca8;text-decoration:none;font-size:.78rem;font-weight:800}
+html[dir="rtl"] .question,html[dir="rtl"] .transcript{text-align:right}
+@media(max-width:700px){.banner{align-items:flex-start;flex-direction:column}.brand-wrap{min-width:0}.header-tools{width:100%;justify-content:space-between}.language-pair{flex:1}}
+</style>
+</head>
+<body>
+<header class="banner">
+<div class="brand-wrap">
+  <div class="brand-mark">LT</div>
+  <div><div class="brand">LINGOTOTAL</div><div class="tagline" data-i18n="tagline">Learn any language your way</div></div>
+</div>
+<div class="header-tools">
+  <div class="language-pair" id="languagePair">English → Català</div>
+  <a class="home-link" href="index.html"><span>⌂</span><span data-i18n="changeLanguages">Activities / change languages</span></a>
+</div>
+</header>
+<input type="hidden" id="uiLanguage" value="en">
+<input type="hidden" id="targetLanguage" value="English">
+
+<main class="page">
+<section class="panel hero"><h1 data-i18n="title">Listen and understand</h1><p data-i18n="intro">Choose a topic, level and duration. LingoTotal creates a monologue, reads it aloud and hides the transcript until the quiz is completed.</p></section>
+
+<section class="panel">
+<div class="head"><div class="num">1</div><div class="title" data-i18n="choose">Choose the topic, level and duration</div></div>
+<label for="themeInput" data-i18n="themeLabel">What would you like to hear someone talk about?</label>
+<input id="themeInput" type="text" data-i18n-placeholder="placeholder" placeholder="For example: a memorable journey, village life, healthy eating...">
+<div class="help" data-i18n="levelLabel">Choose the level:</div>
+<div class="grid"><button class="choice level" data-level="beginner" data-i18n="beginner">Beginner (A1–A2)</button><button class="choice level" data-level="intermediate" data-i18n="intermediate">Intermediate (B1–B2)</button><button class="choice level" data-level="advanced" data-i18n="advanced">Advanced (C1–C2)</button></div>
+<div class="help" data-i18n="durationLabel">Choose the length:</div>
+<div class="grid"><button class="choice duration" data-seconds="10" data-i18n="sec10">10 seconds</button><button class="choice duration" data-seconds="20" data-i18n="sec20">20 seconds</button><button class="choice duration" data-seconds="30" data-i18n="sec30">30 seconds</button></div>
+<div class="help" data-i18n="styleLabel">Choose the style of monologue:</div>
+<div class="grid examples">
+  <button class="choice style" data-style="everyday" data-i18n="everyday">Everyday conversation</button>
+  <button class="choice style" data-style="personal" data-i18n="personal">Personal story</button>
+  <button class="choice style" data-style="news" data-i18n="news">News report</button>
+  <button class="choice style" data-style="cultureStyle" data-i18n="cultureStyle">Culture</button>
+</div>
+<div class="help" data-i18n="examples">Need inspiration?</div>
+<div class="grid examples"><button class="choice example" data-key="travel" data-i18n="travel">Travel</button><button class="choice example" data-key="work" data-i18n="work">Work</button><button class="choice example" data-key="culture" data-i18n="culture">Culture</button><button class="choice example" data-key="food" data-i18n="food">Food</button></div>
+</section>
+
+<section class="panel">
+<div class="head"><div class="num">2</div><div class="title" data-i18n="generateTitle">Generate the listening activity</div></div>
+<button id="generateBtn" class="primary" data-i18n="generate">Generate monologue and quiz</button>
+<div id="loading" class="loading"><div class="spinner"></div><span data-i18n="generating">Generating the activity…</span></div>
+<div id="exercise" class="exercise">
+<div class="audio"><div class="icon">🎧</div><h2 data-i18n="listenTitle">Listen carefully</h2><p data-i18n="listenNote">The transcript is hidden. Listen as many times as you need before answering.</p><div class="controls"><button id="playBtn" class="primary" data-i18n="play">Listen again</button><button id="pauseBtn" class="secondary" data-i18n="pause">Pause</button><button id="stopBtn" class="secondary" data-i18n="stop">Stop</button></div></div>
+<div id="quiz"></div>
+<div class="actions"><button id="checkBtn" class="primary" data-i18n="check">Check quiz</button><button id="newBtn" class="secondary" data-i18n="newExercise">New exercise</button></div>
+<div id="success" class="feedback ok"></div><div id="error" class="feedback bad"></div>
+<div id="score" class="score"><div class="scorebox"><div id="scoreVal" class="scoreval">0/0</div><div data-i18n="quizScore">Quiz score</div></div><div class="scorebox"><div id="percentVal" class="scoreval">0%</div><div data-i18n="percentage">Percentage</div></div></div>
+<div id="transcript" class="transcript"><h2 data-i18n="transcriptTitle">Monologue transcript</h2><div id="transcriptText"></div><div class="sentence-help" data-i18n="sentenceHelp">Select any sentence to hear it separately.</div><button id="replayBtn" class="secondary" data-i18n="replay">Listen again while reading</button></div>
+</div></section>
+
+<section class="panel"><div class="head"><div class="num">3</div><div class="title" data-i18n="restart">Restart</div></div><button id="clearBtn" class="secondary" data-i18n="clear">Clear everything</button></section>
+</main>
+<div id="notice" class="notice"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+const T={
+en:{tagline:'Learn any language your way',changeLanguages:'Activities / change languages',uiLanguage:'Website language',targetLanguage:'Language to learn',title:'Listen and understand',intro:'Choose a topic, level and duration. LingoTotal creates a monologue, reads it aloud and hides the transcript until the quiz is completed.',choose:'Choose the topic, level and duration',themeLabel:'What would you like to hear someone talk about?',placeholder:'For example: a memorable journey, village life, healthy eating...',levelLabel:'Choose the level:',beginner:'Beginner (A1–A2)',intermediate:'Intermediate (B1–B2)',advanced:'Advanced (C1–C2)',durationLabel:'Choose the length:',sec10:'10 seconds',sec20:'20 seconds',sec30:'30 seconds',styleLabel:'Choose the style of monologue:',everyday:'Everyday conversation',personal:'Personal story',news:'News report',cultureStyle:'Culture',examples:'Need inspiration?',travel:'Travel',work:'Work',culture:'Culture',food:'Food',generateTitle:'Generate the listening activity',generate:'Generate monologue and quiz',generating:'Generating the activity…',listenTitle:'Listen carefully',listenNote:'The transcript is hidden. Listen as many times as you need before answering.',play:'Listen again',pause:'Pause',stop:'Stop',check:'Check quiz',newExercise:'New exercise',quizScore:'Quiz score',percentage:'Percentage',transcriptTitle:'Monologue transcript',replay:'Listen again while reading',sentenceHelp:'Select any sentence to hear it separately.',restart:'Restart',clear:'Clear everything',enterTopic:'Enter a topic.',selectLevel:'Choose a level.',selectDuration:'Choose a duration.',selectStyle:'Choose a monologue style.',answerAll:'Answer every question first.',failed:'The activity could not be generated.',scoreText:'You answered {c} of {t} questions correctly.',finished:'Quiz completed. The transcript is now visible.',question:'Question'},
+ca:{tagline:'Aprèn qualsevol llengua a la teva manera',changeLanguages:'Activitats / canvia les llengües',uiLanguage:'Llengua del web',targetLanguage:'Llengua que vols aprendre',title:'Escolta i comprèn',intro:'Tria un tema, un nivell i una durada. LingoTotal crea un monòleg, el llegeix en veu alta i oculta el text fins que completes el qüestionari.',choose:'Tria el tema, el nivell i la durada',themeLabel:'Sobre quin tema vols escoltar algú parlar?',placeholder:'Per exemple: un viatge memorable, la vida en un poble, l’alimentació saludable...',levelLabel:'Tria el nivell:',beginner:'Inicial (A1–A2)',intermediate:'Intermedi (B1–B2)',advanced:'Avançat (C1–C2)',durationLabel:'Tria la durada:',sec10:'10 segons',sec20:'20 segons',sec30:'30 segons',styleLabel:'Tria l’estil del monòleg:',everyday:'Conversa quotidiana',personal:'Història personal',news:'Notícia',cultureStyle:'Cultura',examples:'Necessites inspiració?',travel:'Viatges',work:'Feina',culture:'Cultura',food:'Menjar',generateTitle:'Genera l’activitat d’escolta',generate:'Genera el monòleg i el qüestionari',generating:'Generant l’activitat…',listenTitle:'Escolta amb atenció',listenNote:'El text està ocult. Pots escoltar tantes vegades com necessitis abans de respondre.',play:'Torna a escoltar',pause:'Pausa',stop:'Atura',check:'Comprova el qüestionari',newExercise:'Exercici nou',quizScore:'Puntuació',percentage:'Percentatge',transcriptTitle:'Text del monòleg',replay:'Torna a escoltar mentre llegeixes',sentenceHelp:'Selecciona qualsevol frase per escoltar-la separadament.',restart:'Reinicia',clear:'Esborra-ho tot',enterTopic:'Escriu un tema.',selectLevel:'Tria un nivell.',selectDuration:'Tria una durada.',selectStyle:'Tria un estil de monòleg.',answerAll:'Respon totes les preguntes.',failed:'No s’ha pogut generar l’activitat.',scoreText:'Has respost correctament {c} de {t} preguntes.',finished:'Qüestionari completat. Ara es mostra el text.',question:'Pregunta'},
+es:{tagline:'Aprende cualquier idioma a tu manera',changeLanguages:'Actividades / cambiar idiomas',uiLanguage:'Idioma de la web',targetLanguage:'Idioma que quieres aprender',title:'Escucha y comprende',intro:'Elige un tema, un nivel y una duración. LingoTotal crea un monólogo, lo lee en voz alta y oculta el texto hasta que termines el cuestionario.',choose:'Elige el tema, el nivel y la duración',themeLabel:'¿Sobre qué tema quieres escuchar hablar a alguien?',placeholder:'Por ejemplo: un viaje memorable, la vida en un pueblo, la alimentación saludable...',levelLabel:'Elige el nivel:',beginner:'Inicial (A1–A2)',intermediate:'Intermedio (B1–B2)',advanced:'Avanzado (C1–C2)',durationLabel:'Elige la duración:',sec10:'10 segundos',sec20:'20 segundos',sec30:'30 segundos',styleLabel:'Elige el estilo del monólogo:',everyday:'Conversación cotidiana',personal:'Historia personal',news:'Noticia',cultureStyle:'Cultura',examples:'¿Necesitas inspiración?',travel:'Viajes',work:'Trabajo',culture:'Cultura',food:'Comida',generateTitle:'Genera la actividad de escucha',generate:'Generar monólogo y cuestionario',generating:'Generando la actividad…',listenTitle:'Escucha con atención',listenNote:'El texto está oculto. Puedes escuchar tantas veces como necesites antes de responder.',play:'Escuchar de nuevo',pause:'Pausa',stop:'Detener',check:'Comprobar cuestionario',newExercise:'Ejercicio nuevo',quizScore:'Puntuación',percentage:'Porcentaje',transcriptTitle:'Texto del monólogo',replay:'Escuchar de nuevo mientras lees',sentenceHelp:'Selecciona cualquier frase para escucharla por separado.',restart:'Reiniciar',clear:'Borrar todo',enterTopic:'Escribe un tema.',selectLevel:'Elige un nivel.',selectDuration:'Elige una duración.',selectStyle:'Elige un estilo de monólogo.',answerAll:'Responde todas las preguntas.',failed:'No se ha podido generar la actividad.',scoreText:'Has respondido correctamente {c} de {t} preguntas.',finished:'Cuestionario completado. Ahora se muestra el texto.',question:'Pregunta'},
+fr:{tagline:'Apprenez n’importe quelle langue à votre façon',changeLanguages:'Activités / changer les langues',uiLanguage:'Langue du site',targetLanguage:'Langue à apprendre',title:'Écoutez et comprenez',intro:'Choisissez un thème, un niveau et une durée. LingoTotal crée un monologue, le lit à voix haute et masque le texte jusqu’à la fin du quiz.',choose:'Choisissez le thème, le niveau et la durée',themeLabel:'Sur quel thème souhaitez-vous écouter quelqu’un parler ?',placeholder:'Par exemple : un voyage mémorable, la vie au village, une alimentation saine...',levelLabel:'Choisissez le niveau :',beginner:'Débutant (A1–A2)',intermediate:'Intermédiaire (B1–B2)',advanced:'Avancé (C1–C2)',durationLabel:'Choisissez la durée :',sec10:'10 secondes',sec20:'20 secondes',sec30:'30 secondes',styleLabel:'Choisissez le style du monologue :',everyday:'Conversation quotidienne',personal:'Histoire personnelle',news:'Bulletin d’actualité',cultureStyle:'Culture',examples:'Besoin d’inspiration ?',travel:'Voyages',work:'Travail',culture:'Culture',food:'Alimentation',generateTitle:'Générez l’activité d’écoute',generate:'Générer le monologue et le quiz',generating:'Génération de l’activité…',listenTitle:'Écoutez attentivement',listenNote:'Le texte est masqué. Vous pouvez écouter autant de fois que nécessaire avant de répondre.',play:'Réécouter',pause:'Pause',stop:'Arrêter',check:'Vérifier le quiz',newExercise:'Nouvel exercice',quizScore:'Score',percentage:'Pourcentage',transcriptTitle:'Texte du monologue',replay:'Réécouter en lisant',sentenceHelp:'Sélectionnez une phrase pour l’écouter séparément.',restart:'Recommencer',clear:'Tout effacer',enterTopic:'Saisissez un thème.',selectLevel:'Choisissez un niveau.',selectDuration:'Choisissez une durée.',selectStyle:'Choisissez un style de monologue.',answerAll:'Répondez à toutes les questions.',failed:'Impossible de générer l’activité.',scoreText:'Vous avez répondu correctement à {c} question(s) sur {t}.',finished:'Quiz terminé. Le texte est maintenant visible.',question:'Question'},
+de:{tagline:'Lerne jede Sprache auf deine Weise',uiLanguage:'Sprache der Website',targetLanguage:'Lernsprache',title:'Hören und verstehen',intro:'Wähle ein Thema, ein Niveau und eine Dauer. LingoTotal erstellt einen Monolog, liest ihn vor und hält den Text bis zum Ende des Quiz verborgen.',choose:'Thema, Niveau und Dauer wählen',themeLabel:'Worüber möchtest du jemanden sprechen hören?',placeholder:'Zum Beispiel: eine unvergessliche Reise, Dorfleben, gesunde Ernährung ...',levelLabel:'Niveau wählen:',beginner:'Anfänger (A1–A2)',intermediate:'Mittelstufe (B1–B2)',advanced:'Fortgeschritten (C1–C2)',durationLabel:'Dauer wählen:',sec10:'10 Sekunden',sec20:'20 Sekunden',sec30:'30 Sekunden',styleLabel:'Stil des Monologs wählen:',everyday:'Alltagsgespräch',personal:'Persönliche Geschichte',news:'Nachrichtenbericht',cultureStyle:'Kultur',examples:'Brauchst du Inspiration?',travel:'Reisen',work:'Arbeit',culture:'Kultur',food:'Essen',generateTitle:'Hörübung erstellen',generate:'Monolog und Quiz erstellen',generating:'Aktivität wird erstellt…',listenTitle:'Höre aufmerksam zu',listenNote:'Der Text ist verborgen. Du kannst den Monolog beliebig oft anhören.',play:'Noch einmal hören',pause:'Pause',stop:'Stoppen',check:'Quiz prüfen',newExercise:'Neue Übung',quizScore:'Punktzahl',percentage:'Prozent',transcriptTitle:'Text des Monologs',replay:'Noch einmal hören und mitlesen',sentenceHelp:'Wähle einen Satz aus, um ihn einzeln anzuhören.',restart:'Neu starten',clear:'Alles löschen',enterTopic:'Gib ein Thema ein.',selectLevel:'Wähle ein Niveau.',selectDuration:'Wähle eine Dauer.',selectStyle:'Wähle einen Monologstil.',answerAll:'Beantworte alle Fragen.',failed:'Die Aktivität konnte nicht erstellt werden.',scoreText:'Du hast {c} von {t} Fragen richtig beantwortet.',finished:'Quiz abgeschlossen. Der Text ist jetzt sichtbar.',question:'Frage'},
+it:{tagline:'Impara qualsiasi lingua a modo tuo',changeLanguages:'Attività / cambia lingue',uiLanguage:'Lingua del sito',targetLanguage:'Lingua da imparare',title:'Ascolta e comprendi',intro:'Scegli argomento, livello e durata. LingoTotal crea un monologo, lo legge ad alta voce e nasconde il testo fino alla fine del quiz.',choose:'Scegli argomento, livello e durata',themeLabel:'Di cosa vuoi sentire parlare?',placeholder:'Per esempio: un viaggio memorabile, la vita in un paese, mangiare sano...',levelLabel:'Scegli il livello:',beginner:'Principiante (A1–A2)',intermediate:'Intermedio (B1–B2)',advanced:'Avanzato (C1–C2)',durationLabel:'Scegli la durata:',sec10:'10 secondi',sec20:'20 secondi',sec30:'30 secondi',styleLabel:'Scegli lo stile del monologo:',everyday:'Conversazione quotidiana',personal:'Storia personale',news:'Notiziario',cultureStyle:'Cultura',examples:'Hai bisogno di ispirazione?',travel:'Viaggi',work:'Lavoro',culture:'Cultura',food:'Cibo',generateTitle:'Genera l’attività di ascolto',generate:'Genera monologo e quiz',generating:'Generazione dell’attività…',listenTitle:'Ascolta attentamente',listenNote:'Il testo è nascosto. Ascolta tutte le volte che vuoi prima di rispondere.',play:'Ascolta di nuovo',pause:'Pausa',stop:'Stop',check:'Controlla il quiz',newExercise:'Nuovo esercizio',quizScore:'Punteggio quiz',percentage:'Percentuale',transcriptTitle:'Trascrizione del monologo',replay:'Ascolta di nuovo mentre leggi',sentenceHelp:'Seleziona una frase per ascoltarla separatamente.',restart:'Ricomincia',clear:'Cancella tutto',enterTopic:'Inserisci un argomento.',selectLevel:'Scegli un livello.',selectDuration:'Scegli una durata.',selectStyle:'Scegli uno stile.',answerAll:'Rispondi prima a tutte le domande.',failed:'Non è stato possibile generare l’attività.',scoreText:'Hai risposto correttamente a {c} domande su {t}.',finished:'Quiz completato. Ora il testo è visibile.',question:'Domanda'},
+pt:{tagline:'Aprenda qualquer idioma à sua maneira',changeLanguages:'Atividades / mudar idiomas',uiLanguage:'Idioma do site',targetLanguage:'Idioma a aprender',title:'Ouça e compreenda',intro:'Escolha um tema, nível e duração. O LingoTotal cria um monólogo, lê-o em voz alta e esconde o texto até concluir o questionário.',choose:'Escolha o tema, nível e duração',themeLabel:'Sobre que assunto quer ouvir alguém falar?',placeholder:'Por exemplo: uma viagem memorável, vida numa aldeia, alimentação saudável...',levelLabel:'Escolha o nível:',beginner:'Iniciante (A1–A2)',intermediate:'Intermédio (B1–B2)',advanced:'Avançado (C1–C2)',durationLabel:'Escolha a duração:',sec10:'10 segundos',sec20:'20 segundos',sec30:'30 segundos',styleLabel:'Escolha o estilo do monólogo:',everyday:'Conversa quotidiana',personal:'História pessoal',news:'Noticiário',cultureStyle:'Cultura',examples:'Precisa de inspiração?',travel:'Viagens',work:'Trabalho',culture:'Cultura',food:'Comida',generateTitle:'Gerar atividade de compreensão oral',generate:'Gerar monólogo e questionário',generating:'A gerar a atividade…',listenTitle:'Ouça com atenção',listenNote:'O texto está escondido. Ouça quantas vezes precisar antes de responder.',play:'Ouvir novamente',pause:'Pausa',stop:'Parar',check:'Verificar questionário',newExercise:'Novo exercício',quizScore:'Pontuação',percentage:'Percentagem',transcriptTitle:'Transcrição do monólogo',replay:'Ouvir novamente enquanto lê',sentenceHelp:'Selecione uma frase para a ouvir separadamente.',restart:'Reiniciar',clear:'Apagar tudo',enterTopic:'Introduza um tema.',selectLevel:'Escolha um nível.',selectDuration:'Escolha uma duração.',selectStyle:'Escolha um estilo.',answerAll:'Responda primeiro a todas as perguntas.',failed:'Não foi possível gerar a atividade.',scoreText:'Respondeu corretamente a {c} de {t} perguntas.',finished:'Questionário concluído. O texto está agora visível.',question:'Pergunta'},
+eu:{tagline:'Ikasi edozein hizkuntza zure erara',changeLanguages:'Jarduerak / hizkuntzak aldatu',uiLanguage:'Webgunearen hizkuntza',targetLanguage:'Ikasi nahi duzun hizkuntza',title:'Entzun eta ulertu',intro:'Aukeratu gaia, maila eta iraupena. LingoTotalek bakarrizketa bat sortu eta ozen irakurtzen du; transkripzioa ezkutuan egongo da galdetegia amaitu arte.',choose:'Aukeratu gaia, maila eta iraupena',themeLabel:'Zeri buruz entzun nahi duzu norbait hitz egiten?',placeholder:'Adibidez: bidaia gogoangarri bat, herriko bizimodua, elikadura osasuntsua...',levelLabel:'Aukeratu maila:',beginner:'Hasiberria (A1–A2)',intermediate:'Tartekoa (B1–B2)',advanced:'Aurreratua (C1–C2)',durationLabel:'Aukeratu iraupena:',sec10:'10 segundo',sec20:'20 segundo',sec30:'30 segundo',styleLabel:'Aukeratu bakarrizketaren estiloa:',everyday:'Eguneroko elkarrizketa',personal:'Istorio pertsonala',news:'Albistegia',cultureStyle:'Kultura',examples:'Inspirazioa behar duzu?',travel:'Bidaiak',work:'Lana',culture:'Kultura',food:'Janaria',generateTitle:'Sortu entzumen-jarduera',generate:'Sortu bakarrizketa eta galdetegia',generating:'Jarduera sortzen…',listenTitle:'Entzun arretaz',listenNote:'Transkripzioa ezkutuan dago. Entzun behar adina aldiz erantzun aurretik.',play:'Entzun berriro',pause:'Pausatu',stop:'Gelditu',check:'Egiaztatu galdetegia',newExercise:'Ariketa berria',quizScore:'Puntuazioa',percentage:'Ehunekoa',transcriptTitle:'Bakarrizketaren transkripzioa',replay:'Entzun berriro irakurtzen duzun bitartean',sentenceHelp:'Hautatu esaldi bat bereizita entzuteko.',restart:'Berrabiarazi',clear:'Garbitu dena',enterTopic:'Idatzi gai bat.',selectLevel:'Aukeratu maila bat.',selectDuration:'Aukeratu iraupen bat.',selectStyle:'Aukeratu estilo bat.',answerAll:'Erantzun galdera guztiei lehenik.',failed:'Ezin izan da jarduera sortu.',scoreText:'{t} galderetatik {c} zuzen erantzun dituzu.',finished:'Galdetegia amaituta. Transkripzioa ikusgai dago orain.',question:'Galdera'},
+ja:{tagline:'好きな方法でどんな言語でも学ぼう',changeLanguages:'アクティビティ / 言語を変更',uiLanguage:'ウェブサイトの言語',targetLanguage:'学習する言語',title:'聞いて理解する',intro:'トピック、レベル、長さを選びます。LingoTotalがモノローグを作成して読み上げ、クイズが終わるまで本文を隠します。',choose:'トピック、レベル、長さを選ぶ',themeLabel:'どんな話を聞きたいですか？',placeholder:'例：思い出に残る旅行、村での生活、健康的な食事...',levelLabel:'レベルを選ぶ:',beginner:'初級 (A1–A2)',intermediate:'中級 (B1–B2)',advanced:'上級 (C1–C2)',durationLabel:'長さを選ぶ:',sec10:'10秒',sec20:'20秒',sec30:'30秒',styleLabel:'モノローグのスタイルを選ぶ:',everyday:'日常会話',personal:'個人的な話',news:'ニュース',cultureStyle:'文化',examples:'例から選ぶ:',travel:'旅行',work:'仕事',culture:'文化',food:'食べ物',generateTitle:'リスニング問題を作成',generate:'モノローグとクイズを作成',generating:'作成中…',listenTitle:'よく聞いてください',listenNote:'本文は隠れています。答える前に何度でも聞けます。',play:'もう一度聞く',pause:'一時停止',stop:'停止',check:'クイズを確認',newExercise:'新しい問題',quizScore:'クイズ得点',percentage:'パーセント',transcriptTitle:'モノローグ本文',replay:'読みながらもう一度聞く',sentenceHelp:'文を選ぶと、その文だけを聞けます。',restart:'リセット',clear:'すべて消去',enterTopic:'トピックを入力してください。',selectLevel:'レベルを選んでください。',selectDuration:'長さを選んでください。',selectStyle:'スタイルを選んでください。',answerAll:'最初にすべての質問に答えてください。',failed:'問題を作成できませんでした。',scoreText:'{t}問中{c}問正解です。',finished:'クイズ終了。本文が表示されました。',question:'質問'},
+ar:{tagline:'تعلّم أي لغة بطريقتك',changeLanguages:'الأنشطة / تغيير اللغات',uiLanguage:'لغة الموقع',targetLanguage:'اللغة التي تريد تعلمها',title:'استمع وافهم',intro:'اختر موضوعًا ومستوى ومدة. ينشئ LingoTotal حديثًا قصيرًا ويقرأه بصوت عالٍ ويخفي النص حتى تنتهي من الأسئلة.',choose:'اختر الموضوع والمستوى والمدة',themeLabel:'عن أي موضوع تريد أن تسمع شخصًا يتحدث؟',placeholder:'مثلاً: رحلة لا تُنسى، الحياة في قرية، الطعام الصحي...',levelLabel:'اختر المستوى:',beginner:'مبتدئ (A1–A2)',intermediate:'متوسط (B1–B2)',advanced:'متقدم (C1–C2)',durationLabel:'اختر المدة:',sec10:'10 ثوانٍ',sec20:'20 ثانية',sec30:'30 ثانية',styleLabel:'اختر أسلوب الحديث:',everyday:'حديث يومي',personal:'قصة شخصية',news:'تقرير إخباري',cultureStyle:'ثقافة',examples:'هل تحتاج إلى فكرة؟',travel:'السفر',work:'العمل',culture:'الثقافة',food:'الطعام',generateTitle:'أنشئ نشاط الاستماع',generate:'أنشئ الحديث والأسئلة',generating:'جارٍ إنشاء النشاط…',listenTitle:'استمع بعناية',listenNote:'النص مخفي. استمع قدر ما تحتاج قبل الإجابة.',play:'استمع مرة أخرى',pause:'إيقاف مؤقت',stop:'إيقاف',check:'تحقق من الأسئلة',newExercise:'تمرين جديد',quizScore:'نتيجة الأسئلة',percentage:'النسبة',transcriptTitle:'نص الحديث',replay:'استمع مرة أخرى أثناء القراءة',sentenceHelp:'اختر أي جملة لسماعها وحدها.',restart:'إعادة البدء',clear:'مسح الكل',enterTopic:'أدخل موضوعًا.',selectLevel:'اختر مستوى.',selectDuration:'اختر مدة.',selectStyle:'اختر أسلوبًا.',answerAll:'أجب عن جميع الأسئلة أولاً.',failed:'تعذر إنشاء النشاط.',scoreText:'أجبت عن {c} من {t} أسئلة بشكل صحيح.',finished:'انتهت الأسئلة. النص ظاهر الآن.',question:'سؤال'}
+};
+const voices={English:'en-GB',Catalan:'ca-ES',Spanish:'es-ES',French:'fr-FR',German:'de-DE',Italian:'it-IT',Portuguese:'pt-PT',Basque:'eu-ES',Japanese:'ja-JP',Arabic:'ar-SA'};
+const $=id=>document.getElementById(id);const starterParams=new URLSearchParams(window.location.search);
+const uiNames={en:'English',ca:'Català',es:'Español',fr:'Français',de:'Deutsch',it:'Italiano',pt:'Português',eu:'Euskara',ja:'日本語',ar:'العربية'};
+const targetDisplay={English:'English',Catalan:'Català',Spanish:'Español',French:'Français',German:'Deutsch',Italian:'Italiano',Portuguese:'Português',Basque:'Euskara',Japanese:'日本語',Arabic:'العربية'};
+let inheritedUi=starterParams.get('ui')||localStorage.getItem('lingototal_ui_language')||'en';
+let inheritedTarget=starterParams.get('target')||localStorage.getItem('lingototal_target_language')||'English';
+if(!uiNames[inheritedUi])inheritedUi='en';
+if(!targetDisplay[inheritedTarget])inheritedTarget='English';
+localStorage.setItem('lingototal_ui_language',inheritedUi);
+localStorage.setItem('lingototal_target_language',inheritedTarget);
+$('uiLanguage').value=inheritedUi;
+$('targetLanguage').value=inheritedTarget;
+$('languagePair').textContent=`${uiNames[inheritedUi]} → ${targetDisplay[inheritedTarget]}`;
+let level='',duration=0,style='',exercise=null,answers={};
+const ui=$('uiLanguage'),target=$('targetLanguage'),theme=$('themeInput');
+const tr=k=>(T[inheritedUi]||T.en)[k]||T.en[k]||k;
+function apply(){document.documentElement.lang=inheritedUi;document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=tr(e.dataset.i18n));document.querySelectorAll('[data-i18n-placeholder]').forEach(e=>e.placeholder=tr(e.dataset.i18nPlaceholder));document.title='LingoTotal · '+tr('title');document.documentElement.lang=inheritedUi;document.documentElement.dir=inheritedUi==='ar'?'rtl':'ltr';$('languagePair').textContent=`${uiNames[inheritedUi]} → ${targetDisplay[inheritedTarget]}`}
+function notice(m,t='info'){const n=$('notice');n.textContent=m;n.className='notice show '+t;clearTimeout(notice.x);notice.x=setTimeout(()=>n.classList.remove('show'),3000)}
+async function api(prompt){const r=await fetch('/.netlify/functions/gemini',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,model:'gemini-2.5-flash',temperature:.35})});let d;try{d=await r.json()}catch{throw Error('Invalid server response')}if(!r.ok)throw Error(d?.error||'Server error');const text=d?.candidates?.[0]?.content?.parts?.[0]?.text;if(!text)throw Error('Empty response');return text}
+function cleanJsonText(raw){
+let s=String(raw||'').trim();
+s=s.replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim();
+const first=s.indexOf('{'),last=s.lastIndexOf('}');
+if(first<0||last<=first)throw Error('No JSON object returned');
+return s.slice(first,last+1)
+}
+function parseActivity(raw,expectedCount){
+let data;
+try{data=JSON.parse(cleanJsonText(raw))}
+catch(e){throw Error('AI returned invalid JSON')}
+const monologue=String(data?.monologue||'').trim();
+const source=Array.isArray(data?.questions)?data.questions:[];
+const questions=source.map(item=>{
+const q=String(item?.question||item?.q||'').trim();
+let opts=item?.options||item?.opts||{};
+if(Array.isArray(opts))opts={A:opts[0],B:opts[1],C:opts[2],D:opts[3]};
+const A=String(opts?.A??opts?.a??'').trim();
+const B=String(opts?.B??opts?.b??'').trim();
+const C=String(opts?.C??opts?.c??'').trim();
+const D=String(opts?.D??opts?.d??'').trim();
+const correct=String(item?.correct||item?.answer||'').trim().toUpperCase().replace(/[^ABCD]/g,'').charAt(0);
+return{q,opts:{A,B,C,D},correct}
+}).filter(x=>x.q&&x.opts.A&&x.opts.B&&x.opts.C&&x.opts.D&&/[ABCD]/.test(x.correct));
+if(!monologue)throw Error('The monologue is missing');
+if(questions.length!==expectedCount)throw Error(`Expected ${expectedCount} questions but received ${questions.length}`);
+return{monologue,questions}
+}
+/* =========================================================
+   SHARED LINGOTOTAL CLOUD TEXT-TO-SPEECH CLIENT
+   Calls /.netlify/functions/tts.
+   Falls back to the device voice only if cloud TTS fails.
+   ========================================================= */
+const ltAudioCache = new Map();
+let ltCurrentAudio = null;
+let ltAudioPaused = false;
+
+async function cloudSpeak(text, languageCode='en-GB', speakingRate=1, element=null){
+  const cleanText=String(text||'').trim();
+  if(!cleanText)return;
+
+  const safeRate=Math.min(1.2,Math.max(.75,Number(speakingRate)||1));
+  const cacheKey=`${languageCode}|${safeRate}|${cleanText}`;
+
+  try{
+    cloudStop(false);
+
+    let audioSrc=ltAudioCache.get(cacheKey);
+
+    if(!audioSrc){
+      const response=await fetch('/.netlify/functions/tts',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          text:cleanText,
+          languageCode,
+          speakingRate:safeRate
+        })
+      });
+
+      let data;
+      try{data=await response.json()}
+      catch{throw new Error('Invalid audio server response')}
+
+      if(!response.ok)throw new Error(data?.error||'Audio server error');
+      if(!data?.audioContent)throw new Error('No audio returned');
+
+      audioSrc=`data:${data.mimeType||'audio/mpeg'};base64,${data.audioContent}`;
+      ltAudioCache.set(cacheKey,audioSrc);
+    }
+
+    ltCurrentAudio=new Audio(audioSrc);
+    ltAudioPaused=false;
+
+    if(element){
+      document.querySelectorAll('.sentence.playing').forEach(x=>x.classList.remove('playing'));
+      element.classList.add('playing');
+      const clear=()=>element.classList.remove('playing');
+      ltCurrentAudio.addEventListener('ended',clear,{once:true});
+      ltCurrentAudio.addEventListener('error',clear,{once:true});
+    }
+
+    await ltCurrentAudio.play();
+
+  }catch(err){
+    console.error('Cloud TTS error:',err);
+
+    /* Emergency fallback only */
+    if('speechSynthesis' in window){
+      try{
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(cleanText);
+        u.lang=languageCode;
+        u.rate=safeRate;
+        if(element){
+          element.classList.add('playing');
+          const clear=()=>element.classList.remove('playing');
+          u.onend=clear;
+          u.onerror=clear;
+        }
+        speechSynthesis.speak(u);
+      }catch(fallbackError){
+        console.error('Browser speech fallback error:',fallbackError);
+      }
+    }
+  }
+}
+
+function cloudPauseResume(){
+  if(!ltCurrentAudio)return;
+  if(ltCurrentAudio.paused){
+    ltCurrentAudio.play().catch(console.error);
+    ltAudioPaused=false;
+  }else{
+    ltCurrentAudio.pause();
+    ltAudioPaused=true;
+  }
+}
+
+function cloudStop(reset=true){
+  if(ltCurrentAudio){
+    try{
+      ltCurrentAudio.pause();
+      if(reset)ltCurrentAudio.currentTime=0;
+    }catch{}
+  }
+  ltAudioPaused=false;
+  document.querySelectorAll('.sentence.playing').forEach(x=>x.classList.remove('playing'));
+  if('speechSynthesis' in window){
+    try{speechSynthesis.cancel()}catch{}
+  }
+}
+
+function speakText(text,el=null){
+  return cloudSpeak(text,voices[inheritedTarget]||'en-GB',.9,el);
+}
+function speak(){if(exercise)speakText(exercise.monologue)}
+function buildTranscript(monologue){
+const box=$('transcriptText');box.innerHTML='';
+const sentences=monologue.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[monologue];
+sentences.forEach((sentence,i)=>{
+const span=document.createElement('span');
+span.className='sentence';
+span.textContent=sentence.trim()+(i<sentences.length-1?' ':'');
+span.onclick=()=>speakText(sentence.trim(),span);
+box.appendChild(span)
+})
+}
+function render(ex){exercise=ex;answers={};$('exercise').style.display='block';$('transcript').style.display='none';$('score').style.display='none';$('success').style.display='none';$('error').style.display='none';buildTranscript(ex.monologue);const qz=$('quiz');qz.innerHTML='';ex.questions.forEach((q,i)=>{const card=document.createElement('div');card.className='question';card.innerHTML=`<div class="qtitle">${tr('question')} ${i+1}: ${q.q}</div>`;Object.entries(q.opts).forEach(([l,txt])=>{const b=document.createElement('button');b.className='option';b.textContent=`${l}. ${txt}`;b.onclick=()=>{card.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');answers[i]=l};card.appendChild(b)});qz.appendChild(card)});setTimeout(speak,350)}
+document.querySelectorAll('.level').forEach(b=>b.onclick=()=>{document.querySelectorAll('.level').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');level=b.dataset.level});document.querySelectorAll('.duration').forEach(b=>b.onclick=()=>{document.querySelectorAll('.duration').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');duration=+b.dataset.seconds});document.querySelectorAll('.style').forEach(b=>b.onclick=()=>{document.querySelectorAll('.style').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');style=b.dataset.style});document.querySelectorAll('.example').forEach(b=>b.onclick=()=>{theme.value=tr(b.dataset.key)});
+$('generateBtn').onclick=async()=>{
+const topic=theme.value.trim();
+if(!topic)return notice(tr('enterTopic'),'error');
+if(!level)return notice(tr('selectLevel'),'error');
+if(!duration)return notice(tr('selectDuration'),'error');
+if(!style)return notice(tr('selectStyle'),'error');
+
+const words={10:25,20:50,30:75}[duration];
+const questionCount={10:2,20:3,30:5}[duration];
+const lev={
+beginner:'A1-A2 with short, clear sentences and common vocabulary',
+intermediate:'B1-B2 with natural connected speech and moderately complex vocabulary',
+advanced:'C1-C2 with nuanced, idiomatic and sophisticated language'
+}[level];
+const styleText={
+everyday:'an informal everyday monologue',
+personal:'a first-person personal story',
+news:'a concise news-style report',
+cultureStyle:'a short cultural commentary'
+}[style];
+
+const prompt=`Create one listening-comprehension activity in ${inheritedTarget}.
+
+Topic: ${topic}
+CEFR level: ${lev}
+Style: ${styleText}
+Approximate spoken duration: ${duration} seconds
+Approximate monologue length: ${words} words
+Number of questions: exactly ${questionCount}
+
+Return ONLY one valid JSON object. Do not use markdown, code fences, introductory text or comments.
+
+Use this exact schema:
+{
+  "monologue": "A natural monologue in ${inheritedTarget}",
+  "questions": [
+    {
+      "question": "A comprehension question in ${inheritedTarget}",
+      "options": {
+        "A": "First option",
+        "B": "Second option",
+        "C": "Third option",
+        "D": "Fourth option"
+      },
+      "correct": "A"
+    }
+  ]
+}
+
+Requirements:
+- Include exactly ${questionCount} question objects.
+- Each question must have four distinct options: A, B, C and D.
+- The correct field must contain only A, B, C or D.
+- Questions and answers must be supported by the monologue.
+- Do not reveal the answer inside the question.
+- Keep the monologue close to ${words} words.
+- All learner-facing content must be in ${inheritedTarget}.`;
+
+$('loading').style.display='block';
+$('generateBtn').disabled=true;
+try{
+let raw=await api(prompt);
+let activity;
+try{
+activity=parseActivity(raw,questionCount);
+}catch(firstError){
+console.warn('First AI response could not be parsed:',firstError,raw);
+const repairPrompt=`Your previous response was not valid for the required listening activity.
+
+Return ONLY corrected valid JSON, with no markdown or commentary.
+It must contain:
+- "monologue": a non-empty string
+- "questions": exactly ${questionCount} items
+- every item must contain "question", "options" with A, B, C and D, and "correct" containing only A, B, C or D
+
+Original response to correct:
+${raw}`;
+raw=await api(repairPrompt);
+activity=parseActivity(raw,questionCount);
+}
+render(activity);
+}catch(e){
+console.error(e);
+notice(tr('failed')+' '+e.message,'error');
+}finally{
+$('loading').style.display='none';
+$('generateBtn').disabled=false;
+}
+};
+$('playBtn').onclick=speak;$('replayBtn').onclick=speak;$('pauseBtn').onclick=cloudPauseResume;$('stopBtn').onclick=()=>cloudStop();
+$('checkBtn').onclick=()=>{if(!exercise)return;if(Object.keys(answers).length<exercise.questions.length)return notice(tr('answerAll'),'error');let c=0;document.querySelectorAll('.question').forEach((card,i)=>{const q=exercise.questions[i];card.querySelectorAll('.option').forEach((b,j)=>{const l=['A','B','C','D'][j];if(l===q.correct)b.classList.add('correct');else if(l===answers[i])b.classList.add('incorrect');b.disabled=true});if(answers[i]===q.correct)c++});const t=exercise.questions.length,p=Math.round(c/t*100);$('scoreVal').textContent=`${c}/${t}`;$('percentVal').textContent=`${p}%`;$('score').style.display='grid';const msg=tr('scoreText').replace('{c}',c).replace('{t}',t);const box=c===t?$('success'):$('error');box.textContent=msg;box.style.display='block';$('transcript').style.display='block';notice(tr('finished'),'success')};
+$('newBtn').onclick=()=>$('generateBtn').click();$('clearBtn').onclick=()=>{cloudStop();theme.value='';level='';duration=0;style='';exercise=null;answers={};document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));$('exercise').style.display='none'};apply();
+});
+</script>
+</body></html>
